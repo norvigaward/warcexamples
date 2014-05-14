@@ -16,5 +16,6 @@
 	   <dependency org="org.json" name="json" rev="20140107"/>
 	   <dependency org="edu.stanford.nlp" name="stanford-corenlp" rev="3.3.1"/>
 	   <dependency org="org.jsoup" name="jsoup" rev="1.7.3"/>
+	   <dependency org="SURFsara" name="warcutils" rev="1.0"/>
     </dependencies>
 </ivy-module>
