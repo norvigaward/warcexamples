@@ -115,13 +115,24 @@
   </dependencies>
 
   <build>
+    <!-- Change the standard directory for Maven to look for source files -->
     <sourceDirectory>${basedir}/src</sourceDirectory>
     <resources>
+      <!-- Change the standard directory for Maven to look for resource files -->
       <resource>
         <directory>${basedir}/src</directory>
         <excludes>
           <exclude>**/*.java</exclude>
         </excludes>
+      </resource>
+
+      <!-- Include as a resource the lib directory created by the maven-dependency-plugin -->
+      <resource>
+        <targetPath>lib</targetPath> <!-- Where in the .jar to put the dependencies -->
+        <directory>${project.build.directory}/lib</directory>
+        <includes>
+          <include>**/*.jar</include>
+        </includes>
       </resource>
     </resources>
 
@@ -134,20 +145,6 @@
     </extensions>
 
     <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-        <version>2.4</version>
-        <configuration>
-          <archive>
-            <manifest>
-              <addClasspath>true</addClasspath>
-              <mainClass>nl.surfsara.warcexamples.Main</mainClass>
-              <classpathPrefix>lib/</classpathPrefix>
-            </manifest>
-          </archive>
-        </configuration>
-      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
