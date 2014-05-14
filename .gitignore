@@ -8,13 +8,21 @@
 *.war
 *.ear
 
+# Eclipse files
+.classpath
+.project
+
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 
 # Generated files
 bin/
 gen/
+<<<<<<< HEAD
 /target
 /.settings/**
 /.project
 /.classpath
+=======
+target/
+>>>>>>> branch 'master' of git@github.com:norvigaward/warcexamples.git
