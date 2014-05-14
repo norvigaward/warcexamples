@@ -1,3 +1,18 @@
+/**
+ * Copyright 2014 SURFsara
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package nl.surfsara.warcexamples.hadoop.wet;
 
 import java.io.IOException;
@@ -16,13 +31,31 @@ import edu.stanford.nlp.ie.crf.CRFClassifier;
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
 
+/**
+ * Map function that from a WarcRecord (wet) reads the text/plain content and
+ * performs named entityt recognition. The resulting key, values: tag, term.
+ * Note that only the first 100 response: text/plain records are processed.
+ * Doing this on the full record takes a lot of time. When extending this sample
+ * please perform your own filtering of relevant records.
+ * 
+ * @author mathijs.kattenberg@surfsara.nl
+ */
 class NERMapper extends Mapper<LongWritable, WarcRecord, Text, Text> {
 	private static final Logger logger = Logger.getLogger(NERMapper.class);
+	private static final int MAX_RECORDS = 100;
+	private int numrecords = 0;
 
 	private static enum Counters {
 		CURRENT_RECORD, NUM_TEXT_RECORDS
 	}
 
+	@Override
+	protected void setup(Context context) throws IOException, InterruptedException {
+		super.setup(context);
+
+	}
+
+	@Override
 	public void map(LongWritable key, WarcRecord value, Context context) throws IOException, InterruptedException {
 		context.setStatus(Counters.CURRENT_RECORD + ": " + key.get());
 		// Only process text/plain content
@@ -33,26 +66,29 @@ class NERMapper extends Mapper<LongWritable, WarcRecord, Text, Text> {
 			if (payload == null) {
 				// NOP
 			} else {
-				String warcContent = IOUtils.toString(payload.getInputStreamComplete());
-				try {
-					// Load classifier from resource; For proof of concept only one classifier is provided from the Stanford NER package
-					@SuppressWarnings("unchecked")
-					AbstractSequenceClassifier<CoreLabel> classifier = ((AbstractSequenceClassifier<CoreLabel>) CRFClassifier.getClassifier(NERMapper.class.getResourceAsStream("/nl/surfsara/warcexamples/hadoop/wet/resources/english.all.3classdistsim.crf.ser")));
+				if (numrecords < MAX_RECORDS) {
+					String warcContent = IOUtils.toString(payload.getInputStreamComplete());
+					try {
+						// Load classifier from resource; For proof of concept only one classifier is provided from the Stanford NER package
+						@SuppressWarnings("unchecked")
+						AbstractSequenceClassifier<CoreLabel> classifier = ((AbstractSequenceClassifier<CoreLabel>) CRFClassifier.getClassifier(NERMapper.class.getResourceAsStream("/nl/surfsara/warcexamples/hadoop/wet/resources/english.all.3classdistsim.crf.ser")));
 
-					// Classify text		
-					List<List<CoreLabel>> classify = classifier.classify(warcContent);
-					for (List<CoreLabel> coreLabels : classify) {
-						for (CoreLabel coreLabel : coreLabels) {
-							String term = coreLabel.word();
-							String tag = coreLabel.get(CoreAnnotations.AnswerAnnotation.class);
-							if (!"O".equals(tag)) {
-								context.write(new Text(tag), new Text(term));
+						// Classify text		
+						List<List<CoreLabel>> classify = classifier.classify(warcContent);
+						for (List<CoreLabel> coreLabels : classify) {
+							for (CoreLabel coreLabel : coreLabels) {
+								String term = coreLabel.word();
+								String tag = coreLabel.get(CoreAnnotations.AnswerAnnotation.class);
+								if (!"O".equals(tag)) {
+									context.write(new Text(tag), new Text(term));
+								}
 							}
 						}
+						numrecords++;
+					} catch (Exception e) {
+						e.printStackTrace();
+						logger.error(e);
 					}
-				} catch (Exception e) {
-					e.printStackTrace();
-					logger.error(e);
 				}
 			}
 		}
