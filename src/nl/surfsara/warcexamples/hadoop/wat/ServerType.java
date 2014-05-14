@@ -40,7 +40,7 @@ public class ServerType extends Configured implements Tool {
 
 		Configuration conf = this.getConf();
 
-		Job job = Job.getInstance(conf, "Example Job");
+		Job job = Job.getInstance(conf, "Extract server type");
 		job.setJarByClass(ServerType.class);
 
 		FileInputFormat.addInputPath(job, new Path(args[0]));

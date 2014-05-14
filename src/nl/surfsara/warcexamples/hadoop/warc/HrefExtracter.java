@@ -30,7 +30,8 @@ import org.jwat.common.Payload;
 import org.jwat.warc.WarcRecord;
 
 /**
- * Map function that from a WarcRecord extracts all links. The resulting key, values: page URL, link.  
+ * Map function that from a WarcRecord extracts all links. The resulting key,
+ * values: page URL, link.
  * 
  * @author mathijs.kattenberg@surfsara.nl
  */
@@ -60,15 +61,19 @@ class HrefExtracter extends Mapper<LongWritable, WarcRecord, Text, Text> {
 						// NOP
 					} else {
 						String warcContent = IOUtils.toString(payload.getInputStreamComplete());
-						String targetURI = value.header.warcTargetUriStr;
-						Document doc = Jsoup.parse(warcContent);
+						if (warcContent == null && "".equals(warcContent)) {
+							// NOP
+						} else {
+							String targetURI = value.header.warcTargetUriStr;
+							Document doc = Jsoup.parse(warcContent);
 
-						Elements links = doc.select("a");
-						for (Element link : links) {
-							String absHref = link.attr("abs:href");
-							// Omit nulls and empty strings
-							if (absHref != null && !("".equals(absHref))) {
-								context.write(new Text(targetURI), new Text(absHref));
+							Elements links = doc.select("a");
+							for (Element link : links) {
+								String absHref = link.attr("abs:href");
+								// Omit nulls and empty strings
+								if (absHref != null && !("".equals(absHref))) {
+									context.write(new Text(targetURI), new Text(absHref));
+								}
 							}
 						}
 					}

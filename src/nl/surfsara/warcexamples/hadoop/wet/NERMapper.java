@@ -42,17 +42,24 @@ import edu.stanford.nlp.ling.CoreLabel;
  */
 class NERMapper extends Mapper<LongWritable, WarcRecord, Text, Text> {
 	private static final Logger logger = Logger.getLogger(NERMapper.class);
-	private static final int MAX_RECORDS = 100;
+	private static final int MAX_RECORDS = 100; 	// Maximum records to process
 	private int numrecords = 0;
+	private AbstractSequenceClassifier<CoreLabel> classifier;
 
 	private static enum Counters {
 		CURRENT_RECORD, NUM_TEXT_RECORDS
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void setup(Context context) throws IOException, InterruptedException {
 		super.setup(context);
-
+		numrecords = 0;
+		try {
+			classifier = ((AbstractSequenceClassifier<CoreLabel>) CRFClassifier.getClassifier(NERMapper.class.getResourceAsStream("/nl/surfsara/warcexamples/hadoop/wet/resources/english.all.3class.distsim.crf.ser")));
+		} catch (Exception e) {
+			logger.error(e);
+		}
 	}
 
 	@Override
@@ -68,26 +75,23 @@ class NERMapper extends Mapper<LongWritable, WarcRecord, Text, Text> {
 			} else {
 				if (numrecords < MAX_RECORDS) {
 					String warcContent = IOUtils.toString(payload.getInputStreamComplete());
-					try {
-						// Load classifier from resource; For proof of concept only one classifier is provided from the Stanford NER package
-						@SuppressWarnings("unchecked")
-						AbstractSequenceClassifier<CoreLabel> classifier = ((AbstractSequenceClassifier<CoreLabel>) CRFClassifier.getClassifier(NERMapper.class.getResourceAsStream("/nl/surfsara/warcexamples/hadoop/wet/resources/english.all.3classdistsim.crf.ser")));
-
+					if (warcContent == null && "".equals(warcContent)) {
+						// NOP
+					} else {
 						// Classify text		
 						List<List<CoreLabel>> classify = classifier.classify(warcContent);
 						for (List<CoreLabel> coreLabels : classify) {
 							for (CoreLabel coreLabel : coreLabels) {
 								String term = coreLabel.word();
 								String tag = coreLabel.get(CoreAnnotations.AnswerAnnotation.class);
+
 								if (!"O".equals(tag)) {
+
 									context.write(new Text(tag), new Text(term));
 								}
 							}
 						}
 						numrecords++;
-					} catch (Exception e) {
-						e.printStackTrace();
-						logger.error(e);
 					}
 				}
 			}
