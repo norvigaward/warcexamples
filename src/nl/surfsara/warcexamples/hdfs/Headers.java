@@ -19,7 +19,6 @@ import java.io.IOException;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.security.UserGroupInformation;
-import org.apache.log4j.PropertyConfigurator;
 
 /**
  * Runnable class that uses an existing Kerberos tgt to read a specified warc,
@@ -36,7 +35,7 @@ public class Headers implements Runnable {
 
 	@Override
 	public void run() {
-		PropertyConfigurator.configure("log4jconfig.properties");
+		// PropertyConfigurator.configure("log4jconfig.properties");
 		final Configuration conf = new Configuration();
 		// The core-site.xml and hdfs-site.xml are cluster specific. If you wish to use this on other clusters adapt the files as needed.
 		conf.addResource(Headers.class.getResourceAsStream("/nl/surfsara/warcexamples/hdfs/resources/core-site.xml"));
