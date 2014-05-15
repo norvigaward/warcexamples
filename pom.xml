@@ -8,7 +8,7 @@
 	<groupId>SURFsara</groupId>
 	<artifactId>warcexamples</artifactId>
 	<packaging>jar</packaging>
-	<version>1.0</version>
+	<version>1.1</version>
 
 	<properties>
 		<java.version>6</java.version>
