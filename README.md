@@ -3,9 +3,7 @@ warcexamples
 
 Example programs that work with the March 2014 Common Crawl warc, wet and wat files on the SURFsara hadoop cluster environment.
 
-We have prepared some example code to show how to work with each of the files in the Common Crawl data. This should give
-you a good starting point for your own hacking. The code can be found on our github: [warcexamples source](https://github.com/norvigaward/warcexamples). Precompiled binaries are available from our maven repository: [http://beehub.nl/surfsara-repo/releases/](http://beehub.nl/surfsara-repo/releases/).
-To clone the source:
+We have prepared some example code to show how to work with each of the files in the Common Crawl data. This should give you a good starting point for your own hacking. The code can be found on our github: [warcexamples source](https://github.com/norvigaward/warcexamples). Precompiled binaries are available from our maven repository: [http://beehub.nl/surfsara-repo/releases/](http://beehub.nl/surfsara-repo/releases/). To clone the source:
 
     git clone https://github.com/norvigaward/warcexamples
 
