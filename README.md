@@ -4,9 +4,12 @@ warcexamples
 Example programs that work with the March 2014 Common Crawl warc, wet and wat files on the SURFsara hadoop cluster environment.
 
 We have prepared some example code to show how to work with each of the files in the Common Crawl data. This should give
-            you a good starting point for your own hacking. The code can be found on our github: [warcexamples source](https://github.com/norvigaward/warcexamples). Precompiled binaries are available from our maven repository: [http://beehub.nl/surfsara-repo/releases/](http://beehub.nl/surfsara-repo/releases/). To clone the source:
-            git clone https://github.com/norvigaward/warcexamples The warcexamples project contains both Ant/Ivy and Maven build files and
-          should by easy to use with your favourite editor/ide. If you have any questions on building or compiling the source please let us know by sending an email to: [hadoop.support@surfsara.nl](mailto:hadoop.support@surfsara.nl?subject=Norvig Award: examples).
+you a good starting point for your own hacking. The code can be found on our github: [warcexamples source](https://github.com/norvigaward/warcexamples). Precompiled binaries are available from our maven repository: [http://beehub.nl/surfsara-repo/releases/](http://beehub.nl/surfsara-repo/releases/).
+To clone the source:
+
+    git clone https://github.com/norvigaward/warcexamples
+
+The warcexamples project contains both Ant/Ivy and Maven build files should by easy to use with your favourite editor/ide. If you have any questions on building or compiling the source please let us know by sending an email to: [hadoop.support@surfsara.nl](mailto:hadoop.support@surfsara.nl?subject=Norvig Award: examples).
 
 #### Running the mapreduce examples
 
@@ -31,6 +34,7 @@ Usage:
         yarn jar warcexamples.jar servertype hdfs_input_path hdfs_output_path
 
 *   href: parses the html in warc files and outputs the url of the crawled page and the links (href attribute) from the parsed document. See the [`nl.surfsara.warcexamples.hadoop.warc`](https://github.com/norvigaward/warcexamples/tree/master/src/nl/surfsara/warcexamples/hadoop/warc) package for relevant code. Usage:
+
         yarn jar warcexamples.jar href hdfs_input_path hdfs_output_path
 
     Note that the input path should consist of sequence files.
